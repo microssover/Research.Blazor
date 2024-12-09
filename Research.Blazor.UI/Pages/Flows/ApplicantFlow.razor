@@ -1,0 +1,140 @@
+﻿@page "/flows"
+@using Research.Blazor.UI.Base
+@inherits RazorComponentBase
+
+<Button Color="ButtonColor.Danger" @onclick="OpenCreateModal"> İş Akışını Oluştur <Icon Name="IconName.Clipboard2PlusFill" Color="IconColor.White"></Icon></Button>
+
+<br>
+<br>
+@if (Flows != null)
+{
+    <table class="table table-bordered table-responsive-md">
+
+        <thead>
+
+            <tr>
+                <th scope="col">İş Akışı</th>
+                <th scope="col">Departman</th>
+                <th scope="col">İş Akışı Sil</th>
+                <th scope="col">Güncelle</th>
+            </tr>
+        </thead>
+        @foreach (var flow in Flows)
+        {
+            <tbody>
+                <tr>
+                    <td>@flow.Name</td>
+                    <td>@flow.DepartmentDto?.Name</td>
+                    <td @onclick="() => Delete(flow.Id)" style="cursor:pointer; width:auto">
+                        <Icon Name="IconName.Trash" Size="IconSize.x2" Color="IconColor.Danger"></Icon>
+                    </td>
+                    <td @onclick="() => OpenUpdateModal(flow)" style="cursor:pointer; width:auto">
+                        <Icon Name="IconName.BoxArrowInUp" Size="IconSize.x2" Color="IconColor.Danger"></Icon>
+                    </td>
+                </tr>
+
+            </tbody>
+        }
+    </table>
+}
+
+
+<Modal @ref="CreateFirstFlowModal" Title="İş Akışı" Size="ModalSize.Large">
+    <BodyTemplate>
+        <div>
+
+            <div class="form-group">
+                <span>
+                    Akış ismi :
+                </span>
+                <input class="form-control" type="text" @bind="@CreateFlowRequest.Name" />
+            </div>
+
+
+            <h5> Departmanı Seçiniz</h5>
+            <select class="form-select btn-outline-secondary" @bind="CreateFlowRequest.Department_Id" style="width: auto;">
+                <option value="null">1. Departmanı Seçiniz</option>
+
+                @if (Departments != null)
+                {
+                    @foreach (var department in Departments)
+                    {
+                        <option value="@department.Id">@department.Name</option>
+                    }
+                }
+            </select>
+            <br>
+
+            <div class="form-group">
+                <span>
+                    İlişkili süreç
+                </span>
+                <select class="form-select" @bind="SelectedNextFlowId">
+                    <option>--</option>
+                    @if (Flows is not null && Flows.Any())
+                    {
+                        foreach (var item in Flows)
+                        {
+                            <option value="@item.Id">
+                                @item.Name
+                            </option>
+                        }
+                    }
+                </select>
+            </div>
+
+        </div>
+
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Danger" @onclick="CreateFlow">Kaydet</Button>
+    </FooterTemplate>
+</Modal>
+
+
+<Modal @ref="UpdateFlowModal" Title="İş Akışı Güncelle" Size="ModalSize.Large">
+    <BodyTemplate>
+        <div>
+            <label>İş Akışı İsmi :</label>
+            <input type="text" class="form-control mt-2" @bind="@SelectedFlow.Name">
+
+            <label>Departman :</label>
+            <select class="form-select btn-outline-secondary" @bind="SelectedFlow.Department_Id" style="width: auto;">
+                <option selected>Departman Seçiniz</option>
+
+                @if (Departments != null && Departments.Any())
+                {
+                    @foreach (var department in Departments)
+                    {
+                        <option value="@department.Id">@department.Name</option>
+                    }
+                }
+            </select>
+
+            <br>
+            <h4>Süreç Bağlama</h4>
+
+            <label>Sonraki Süreci Seçiniz :</label>
+            <select class="form-select btn-outline-secondary" @bind="@SelectedFlow.Next_Flow_Id" style="width: auto;">
+
+                <option selected>Süreç Seçiniz</option>
+
+                @if (Flows != null && Flows.Any())
+                {
+                    @foreach (var flow in Flows)
+                    {
+                        <option value="@flow.Id">@flow.Name</option>
+                    }
+                }
+            </select>
+        </div>
+
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Danger" @onclick="Update">Kaydet</Button>
+        <Button Color="ButtonColor.Danger" @onclick="CloseModal">Kapat</Button>
+    </FooterTemplate>
+</Modal>
+
+<br>
+<br>

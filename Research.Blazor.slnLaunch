@@ -1,0 +1,19 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "Research.Blazor.Api\\Research.Blazor.Api.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "Research.Blazor.UI\\Research.Blazor.UI.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "Research.Mvc\\Research.Mvc.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

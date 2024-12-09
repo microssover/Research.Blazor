@@ -1,0 +1,100 @@
+﻿ @page "/department"
+@using Research.Blazor.UI.Base
+ @inherits RazorComponentBase
+
+
+<Button Color="ButtonColor.Danger" @onclick="OpenCreateModal">Departman Oluştur <Icon Name="IconName.Clipboard2PlusFill" Color="IconColor.White"></Icon></Button>
+<br>
+<br>
+<br>
+@if (Departments != null)
+{
+    <table class="table table-bordered table-responsive-md">
+
+        <thead>
+
+            <tr>
+                <th scope="col">Departman</th>
+                <th scope="col">Yönetici</th>
+                <th scope="col">Departman Sil</th>
+                <th scope="col">Güncelle</th>
+            </tr>
+        </thead>
+        @foreach (var department in Departments)
+        {
+            <tbody>
+                <tr>
+                    <td>@department.Name</td>
+                    <td>@department.ManagerDTO?.Name @department.ManagerDTO?.Surname</td>
+                    <td @onclick="() => Delete(department.Id)" style="cursor:pointer; width:auto">
+                        <Icon Name="IconName.Trash" Size="IconSize.x2" Color="IconColor.Danger"></Icon>
+                    </td>
+                    <td @onclick="() => OpenUpdateModal(department)" style="cursor:pointer; width:auto">
+                        <Icon Name="IconName.BoxArrowInUp" Size="IconSize.x2" Color="IconColor.Danger"></Icon>
+                    </td>
+                </tr>
+            </tbody>
+        }
+    </table>
+}
+
+
+<br>
+<br>
+<br>
+
+<Modal @ref="CreateDepartmentModal" Title="Departman" Size="ModalSize.Large">
+    <BodyTemplate>
+        <div>
+            <label>Departman Adı :</label>
+            <input type="text" class="form-control mt-2" @bind="@CreateDepartmentRequest.Name">
+            <br>
+
+            <select class="form-select btn-outline-secondary" @bind="CreateDepartmentRequest.Manager_Id" style="width: auto;">
+                <option selected value="@Guid.Empty">Yönetici Seçiniz</option>
+
+                @if (Managers != null)
+                {
+                    @foreach (var manager in Managers)
+                    {
+                        <option value="@manager.Id">@($"{manager.Name} {manager.Surname}") </option>
+                    }
+                }
+            </select>
+        </div>
+
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Danger" @onclick="Save">Kaydet</Button>
+    </FooterTemplate>
+</Modal>
+
+
+
+<Modal @ref="UpdateDepartmentModal" Title="Departmanı Güncelle" Size="ModalSize.Large">
+    <BodyTemplate>
+        <div>
+            <label>Departman Adı :</label>
+            <input type="text" class="form-control mt-2" @bind="@SelectedDepartment.Name">
+            <br>
+
+             <label>Yönetici :</label>
+            <select class="form-select btn-outline-secondary" @bind="SelectedDepartment.Manager_Id" style="width: auto;">
+                <option selected>Yönetici Seçiniz</option>
+
+                @if (Managers != null && Managers.Any())
+                {
+                    @foreach (var manager in Managers)
+                    {
+                        <option value="@manager.Id">@manager.Name @manager.Surname</option>
+                    }
+                }
+            </select>
+        </div>
+
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Danger" @onclick="Update">Kaydet</Button>
+        <Button Color="ButtonColor.Danger" @onclick="CloseModal">Kapat</Button>
+    </FooterTemplate>
+</Modal>

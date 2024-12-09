@@ -1,0 +1,133 @@
+﻿@using Research.Dto.DTO
+@{
+    // var jobTypes = ViewData["jobTypes"] as List<JobTypeDTO>;
+}
+ @model List<JobTypeDTO>
+
+<head>
+    <link rel="stylesheet" href="~/css/form.css" />
+</head>
+
+<body>
+    <form id="applicantForm" onsubmit="addApplicant(event)">
+        <div class="form">
+            <div class="title">Applicant Form</div>
+
+            <!-- Name -->
+            <div class="input-container">
+                <input id="name" class="input" type="text" placeholder=" " required />
+                <label for="name" class="placeholder">Name</label>
+            </div>
+
+            <!-- Surname -->
+            <div class="input-container">
+                <input id="surname" class="input" type="text" placeholder=" " required />
+                <label for="surname" class="placeholder">Surname</label>
+            </div>
+
+            <!-- Email -->
+            <div class="input-container">
+                <input id="email" class="input" type="email" placeholder=" " required />
+                <label for="email" class="placeholder">Email</label>
+            </div>
+
+            @if (Model != null)
+            {
+                <div class="input-container">
+                    <select id="" name="jobType" class="input">
+                        <option value="" disabled selected>İş Türü Seçiniz</option>
+                        @foreach (var jobtype in Model)
+                        {
+                            <option value="@jobtype.Id">@jobtype.Desc</option>
+                        }
+                    </select>
+                </div>
+            }
+            @* 
+        <!-- Status -->
+        <div class="input-container">
+            <select id="status" class="input">
+                <option value="0">Pending</option>
+                <option value="1">Approved</option>
+                <option value="2">Rejected</option>
+            </select>
+            <label for="status" class="placeholder">Status</label>
+        </div> *@
+
+            <!-- Applicant Date -->
+            <div class="input-container">
+                <input id="applicantDate" class="input" type="date" required />
+                <label for="applicantDate" class="placeholder">Applicant Date</label>
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" class="submit">Submit</button>
+        </div>
+    </form>
+
+    @* <script src="~/js/site.js"></script> *@
+    <script>
+                        async function addApplicant(event) {
+            event.preventDefault();
+
+            const applicant = {
+                name: document.getElementById("name").value,
+                surname: document.getElementById("surname").value,
+                email: document.getElementById("email").value,
+                jobType: document.getElementById("jobType") ? document.getElementById("jobType").value : null, // Eğer yoksa null ata
+                jobTypeId: document.getElementById("jobTypeId") ? document.getElementById("jobTypeId").value : null, // Eğer yoksa null ata
+                applicantDate: document.getElementById("applicantDate").value,
+                currentFlowId: null
+            };
+
+            try {
+                const response = await fetch("/ApplicantRecords/CreateApplicant", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(applicant)
+                });
+
+                if (response.ok) {
+                    alert("Applicant added successfully!");
+                } else {
+                    const errorText = await response.text();
+                    console.error("Error:", errorText);
+                    alert("Error adding applicant: " + errorText);
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("An unexpected error occurred.");
+            }
+        }
+
+
+
+                             async function loadJobTypes() {
+                        try {
+                            const response = await fetch("/ApplicantRecords/GetJobTypes"); // GetJobTypes API çağrısı
+                            if (response.ok) {
+                                const jobTypes = await response.json();
+
+                                // const dropdown = document.getElementById("jobTypeId");
+                                // jobTypes.forEach(jobType => {
+                                //     const option = document.createElement("option");
+                                //     option.value = jobType.id; // JobType ID'si
+                                //     option.textContent = jobType.name; // JobType Adı
+                                //     dropdown.appendChild(option);
+                                });
+                            } else {
+                                console.error("Error fetching job types");
+                            }
+                        } catch (error) {
+                            console.error("Error:", error);
+                        }
+                    }
+
+                    // Sayfa yüklendiğinde job types'ı getir
+                    document.addEventListener("DOMContentLoaded", loadJobTypes);
+    </script>
+
+</body>
+

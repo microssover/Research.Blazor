@@ -1,0 +1,13 @@
+﻿@using Blazored.Toast
+@using Blazored.Toast.Configuration
+@using Research.Blazor.UI.Base
+
+@inherits LayoutComponentBase
+@inject MainLayoutCascadingValue MainLayoutCascadingValue
+
+
+<CascadingValue Value="MainLayoutCascadingValue">
+    @Body
+</CascadingValue>
+<BlazoredToasts Position="ToastPosition.TopCenter"
+                Timeout="5" />

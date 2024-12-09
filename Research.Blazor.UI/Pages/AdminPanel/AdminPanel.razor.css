@@ -1,0 +1,112 @@
+﻿.status span {
+    background-color : yellow;
+}
+
+/* Genel container ve layout */
+.container-md {
+    max-width: 100%;
+    margin: auto;
+}
+
+/* Tablolar */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 14px;
+    text-align: left;
+    background-color: #fff;
+}
+
+    .table thead th {
+        background-color: #f4f4f4;
+        font-weight: bold;
+        padding: 12px;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    .table tbody td {
+        padding: 10px;
+        text-align: center;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+
+.table-bordered td,
+.table-bordered th {
+    border: 1px solid #ddd;
+}
+
+/* İkon ve buton stilleri */
+.icon {
+    display: inline-block;
+    vertical-align: middle;
+    cursor: pointer;
+    margin: 0 auto;
+    font-size: 16px;
+    transition: color 0.2s ease-in-out;
+}
+
+    .icon:hover {
+        color: #007bff;
+    }
+
+.btn-success, .btn-danger, .btn-secondary {
+    padding: 5px 10px;
+    font-size: 14px;
+    border-radius: 4px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+    .btn-success:hover {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background-color: #6c757d;
+        color: white;
+    }
+
+/* Modal container */
+.modal .container-md {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+/* Resimler */
+img {
+    border-radius: 4px;
+    margin: 5px;
+    max-width: 100%;
+    height: auto;
+}
+
+/* Responsive tasarım */
+@media screen and (max-width: 768px) {
+    .table {
+        font-size: 12px;
+    }
+
+        .table thead th, .table tbody td {
+            padding: 8px;
+        }
+
+    .btn-success, .btn-danger, .btn-secondary {
+        padding: 3px 8px;
+        font-size: 12px;
+    }
+
+    img {
+        height: 150px;
+        width: 150px;
+    }
+}
+

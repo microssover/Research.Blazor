@@ -1,0 +1,104 @@
+﻿@page "/jobtype"
+@using Research.Blazor.UI.Base
+@inherits RazorComponentBase
+
+<Button Color="ButtonColor.Danger" @onclick="OpenCreateModal">İş Türü Oluştur <Icon Name="IconName.Clipboard2PlusFill" Color="IconColor.White"></Icon></Button>
+
+<br>
+<br>
+<br>
+
+@if (JobTypes != null)
+{
+    <table class="table table-bordered table-responsive-md">
+
+        <thead>
+
+            <tr>
+                <th scope="col">İş Türü</th>
+                <th scope="col">Departman</th>
+                <th scope="col">İş Türü Sil</th>
+                <th scope="col">Güncelle</th>
+            </tr>
+        </thead>
+        @foreach (var jobtype in JobTypes)
+        {
+            <tbody>
+                <tr>
+                    <td>@jobtype.Desc</td>
+                    <td>@jobtype.DepartmentDTO?.Name</td>
+                    <td @onclick="() => Delete(jobtype.Id)" style="cursor:pointer; width:auto">
+                        <Icon Name="IconName.Trash" Size="IconSize.x2" Color="IconColor.Danger"></Icon>
+                    </td>
+                    <td @onclick="() => OpenUpdateModal(jobtype)" style="cursor:pointer; width:auto">
+                        <Icon Name="IconName.BoxArrowInUp" Size="IconSize.x2" Color="IconColor.Danger"></Icon>
+                    </td>
+                </tr>
+
+            </tbody>
+        }
+    </table>
+}
+
+
+<br>
+<br>
+<br>
+@alert
+
+
+<Modal @ref="CreateJobTypeModal" Title="İş Türü" Size="ModalSize.Large">
+    <BodyTemplate>
+        <div>
+            <label>Departman Adı :</label>
+            <input type="text" class="form-control mt-2" @bind="@CreateJobTypeRequest.Desc">
+            <br>
+
+            <select class="form-select btn-outline-secondary" @bind="CreateJobTypeRequest.Department_Id" style="width: auto;">
+                <option value="@Guid.Empty">Departman Seçiniz</option>
+
+                @if (Departments != null)
+                {
+                    @foreach (var department in Departments)
+                    {
+                        <option value="@department.Id">@department.Name</option>
+                    }
+                }
+            </select>
+        </div>
+
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Danger" @onclick="Save">Kaydet</Button>
+    </FooterTemplate>
+</Modal>
+
+
+
+<Modal @ref="UpdateJobTypeModal" Title="İş Türü Güncelle" Size="ModalSize.Large">
+    <BodyTemplate>
+        <div>
+            <label>İş Türü :</label>
+            <input type="text" class="form-control mt-2" @bind="@SelectedJobType.Desc">
+            <br>
+
+            <label>Departman :</label>
+            <select class="form-select btn-outline-secondary" @bind="SelectedJobType.Department_Id" style="width: auto;">
+                <option selected>Departman Seçiniz</option>
+
+                @if (Departments != null && Departments.Any())
+                {
+                    @foreach (var department in Departments)
+                    {
+                        <option value="@department.Id">@department.Name</option>
+                    }
+                }
+            </select>
+        </div>
+
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Danger" @onclick="Update">Kaydet</Button>
+        <Button Color="ButtonColor.Danger" @onclick="CloseModal">Kapat</Button>
+    </FooterTemplate>
+</Modal>

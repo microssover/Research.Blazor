@@ -1,0 +1,196 @@
+﻿@page "/adminpanel"
+@page "/"
+@using Research.Blazor.UI.Base
+@inherits RazorComponentBase
+
+
+<select @onchange="HandleManagerSelect" class="form-select btn-outline-secondary" style="width: auto;">
+    @if (Managers != null)
+    {
+        <option selected value="@Guid.Empty">Yönetici Seçiniz</option>
+
+        @foreach (var manager in Managers)
+        {
+            <option value="@manager.Id" selected="@((manager.Id == selectedManager) ? true : false)">
+                @manager.Name @manager.Surname
+            </option>
+        }
+    }
+
+</select>
+
+<br>
+
+<div class="d-flex justify-content-center g-page">
+    <div class="col-12 mt-5">
+        <div class="row page-titles">
+            <div class="col-12 col-md-6 col-lg-4 align-self-center">
+                <h2 class="p-header">Süreçler Ekranı</h2>
+            </div>
+        </div>
+
+        <div class="card mid-card mt-4">
+            <div class="card-body document">
+                <div class="row d-header pb-3">
+                    <div class="col-12 col-md-5 col-lg-4 col-sm-4">
+                        <h5 class="card-title mb-0 d-flex align-items-center"><Icon Name="IconName.ArrowRightSquareFill" Size="IconSize.x1" Color="IconColor.Primary"></Icon>Devam Eden Süreçler</h5>
+                    </div>
+
+                </div>
+                <hr />
+                <div class="table-responsive ">
+
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <td class="text-header">Name</td>
+                                <td class="text-header">Surname</td>
+                                <td class="text-header">Email</td>
+                                <td class="text-header">Job Type</td>
+                                <td class="text-header">Status</td>
+                                <td class="text-header">Apply Date</td>
+                                <td class="text-header">Images</td>
+                                <td class="text-header">Onay</td>
+                                <td class="text-header">Red</td>
+                                <td class="text-header">Başvuran Sil</td>
+                            </tr>
+                        </thead>
+
+                        @if (Applicants != null)
+                        {
+                            <tbody>
+                                @foreach (var applicant in Applicants)
+                                {
+                                    <tr>
+                                        <td class="text-muted">@applicant.Name</td>
+                                        <td class="text-muted">@applicant.Surname</td>
+                                        <td class="text-muted">@applicant.Email</td>
+                                        <td class="text-muted">@applicant.Job_Type</td>
+                                        <td class="status"><span>@applicant.Status </span></td>
+                                        <td class="text-muted">@applicant.Applicant_Date</td>
+                                        <td class="text-muted"><Button Color="ButtonColor.Secondary" @onclick="() => OpenImages(applicant.Id)">Images</Button></td>
+                                        <td class="text-muted"><button class="btn btn-success" @onclick="() => ApproveApplicant(applicant)">Kabul Et</button></td>
+                                        <td class="text-muted"><button class="btn btn-danger" @onclick="() => RejectApplicant(applicant)">Reddet</button></td>
+                                        <td @onclick="() => DeleteApplicant(applicant.Id)" style="cursor:pointer; width:auto">
+                                            <Icon Name="IconName.Trash" Size="IconSize.x2" Color="IconColor.Danger"></Icon>
+                                        </td>
+                                    </tr>
+                                }
+
+                            </tbody>
+                        }
+                        else
+                        {
+                            <tr>
+                                <td>No Applicant</td>
+                            </tr>
+                        }
+
+
+                    </table>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mid-card mt-4">
+    <div class="card-body document">
+        <div class="row d-header pb-3">
+            <div class="col-12 col-md-5 col-lg-4 col-sm-4">
+                <h5 class="card-title mb-0"><Icon Name="IconName.Check2All" Size="IconSize.x1" Color="IconColor.Success"></Icon>Tamamlanan Süreçler</h5>
+            </div>
+
+        </div>
+        <div>
+            <div>
+                <hr />
+                <div class="table-responsive ">
+                    <div class="container-md">
+                        <table class="table table-bordered table-responsive-md">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Surname</td>
+                                    <td>Email</td>
+                                    <td>Job Type</td>
+                                    <td>Status</td>
+                                    <td>Apply Date</td>
+                                    <td>Images</td>
+                                    <td>Başvuran Sil</td>
+                                </tr>
+                            </thead>
+
+                            @if (DecidedApplicants != null)
+                            {
+                                <tbody>
+                                    @foreach (var applicant in DecidedApplicants)
+                                    {
+                                        <tr>
+                                            <td>@applicant.Name</td>
+                                            <td>@applicant.Surname</td>
+                                            <td>@applicant.Email</td>
+                                            <td>@applicant.Job_Type</td>
+                                            <td class="status"><span>@applicant.Status</span></td>
+                                            <td>@applicant.Applicant_Date</td>
+                                            <td class="text-muted"><Button Color="ButtonColor.Secondary" @onclick="() => OpenImages(applicant.Id)">Images</Button></td>
+                                            <td @onclick="() => DeleteApplicant(applicant.Id)" style="cursor:pointer">
+                                                <Icon Name="IconName.Trash" Size="IconSize.x2" Color="IconColor.Danger"></Icon>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            }
+
+
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+<Modal @ref="ShowApplicantImages" Title="Başvuran Resimleri" Size="ModalSize.Regular">
+    <BodyTemplate>
+        <div class="container-md" style="width:800px;height:800px;overflow-x:auto">
+            <table class="table table-bordered table-responsive-md">
+
+                <thead>
+                    <tr>
+                        <td>Image</td>
+                        <td>Path</td>
+                    </tr>
+                </thead>
+                @if (Images != null)
+                {
+                    <tbody>
+
+                        @foreach (var image in Images)
+                        {
+                            <tr>
+                                <td>
+                                    <img height="200" width="200" src=@($"https://localhost:7013{image.Path}") />
+                                </td>
+                                <td>@image.Path</td>
+                            </tr>
+                        }
+                    </tbody>
+                }
+                else
+                {
+                    <tr>
+                        <td>No Applicant</td>
+                    </tr>
+                }
+            </table>
+        </div>
+    </BodyTemplate>
+</Modal>
+
+

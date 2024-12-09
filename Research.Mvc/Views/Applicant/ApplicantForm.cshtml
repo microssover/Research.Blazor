@@ -1,0 +1,19 @@
+﻿@model Research.Dto.DTO.ApplicantRecordsDTO
+
+<h2>Create Applicant</h2>
+
+<form asp-action="CreateApplicant" asp-controller="ApplicantRecords" method="post">
+    <div>
+        <label for="Name">Name:</label>
+        <input type="text" id="Name" name="Name" required />
+    </div>
+    <div>
+        <label for="Email">Email:</label>
+        <input type="email" id="Email" name="Email" required />
+    </div>
+    <div>
+        <label for="Phone">Phone:</label>
+        <input type="text" id="Phone" name="Phone" required />
+    </div>
+    <button type="submit">Create</button>
+</form>

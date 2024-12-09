@@ -1,0 +1,186 @@
+﻿@using Research.Dto.DTO
+@{
+    // var jobTypes = ViewData["jobTypes"] as List<JobTypeDTO>;
+}
+ @model List<JobTypeDTO>
+
+<head>
+    <link rel="stylesheet" href="~/css/form.css" />
+</head>
+
+<body>
+    <div class="form">
+        <div class="title">Applicant Form</div>
+
+        <div class="input-container">
+            <input id="name" class="input" type="text" placeholder=" " required />
+            <label for="name" class="placeholder">Name</label>
+        </div>
+
+        <div class="input-container">
+            <input id="surname" class="input" type="text" placeholder=" " required />
+            <label for="surname" class="placeholder">Surname</label>
+        </div>
+
+        <div class="input-container">
+            <input id="email" class="input" type="email" placeholder=" " required />
+            <label for="email" class="placeholder">Email</label>
+        </div>
+
+
+        <div class="input-container">
+            <input id="profileImage" class="input" type="file" placeholder=" " required />
+            <label for="image" class="placeholder">Profile Image</label>
+        </div>
+
+        <div class="input-container">
+            <input id="applicantImages" class="input" type="file" multiple placeholder=" " required />
+            <label for="image" class="placeholder">Add Images +</label>
+        </div>
+
+
+        @if (Model != null)
+        {
+            <div class="input-container">
+                <select id="jobTypeId" name="jobType" class="input">
+                    <option value="" disabled selected>İş Türü Seçiniz</option>
+                    @foreach (var jobtype in Model)
+                    {
+                        <option value="@jobtype.Id" data-desc="@jobtype.Desc">@jobtype.Desc</option>
+                    }
+                </select>
+            </div>
+        }
+
+
+        <div class="input-container">
+            <input id="applicantDate" class="input" type="date" required />
+            <label for="applicantDate" class="placeholder">Applicant Date</label>
+        </div>
+
+        <button type="button" id="OnApplicantSave" class="submit">Submit</button>
+    </div>
+
+    <script>
+
+                   document.getElementById("OnApplicantSave").addEventListener("click", async function() {
+            const isApplicantCreated = await addApplicant();
+
+            if (isApplicantCreated) {
+                await saveImages();
+            }
+        });
+
+        async function addApplicant() {
+
+            const selectedJobTypeId = document.getElementById("jobTypeId").value;
+            const selectedJobTypeDesc = document.getElementById("jobTypeId").selectedOptions[0].getAttribute("data-desc");
+
+            const profileImageInput = document.getElementById("profileImage");
+            const file = profileImageInput.files[0];
+
+            if (!file) {
+                alert("Please select a profile image.");
+                return false;
+            }
+
+                function byteArrayToBase64(byteArray) {
+            let binaryString = '';
+            for (let i = 0; i < byteArray.length; i++) {
+                binaryString += String.fromCharCode(byteArray[i]);
+            }
+            return btoa(binaryString);
+        }
+
+            const fileByteArray = await fileToByteArray(file);
+            const fileBase64 = byteArrayToBase64(fileByteArray);
+
+            const applicantData = {
+                name: document.getElementById("name").value,
+                surname: document.getElementById("surname").value,
+                email: document.getElementById("email").value,
+                Job_Type: selectedJobTypeDesc,
+                JobTypeId: selectedJobTypeId,
+                applicant_Date: document.getElementById("applicantDate").value,
+                profileImage: fileBase64,
+            };
+
+            try {
+                const response = await fetch("/ApplicantRecords/CreateApplicant", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(applicantData),
+                });
+
+                if (response.ok) {
+                    alert("Applicant added successfully!");
+                    return true;
+                } else {
+                    const errorText = await response.text();
+                    console.error("Error:", errorText);
+                    alert("Error adding applicant: " + errorText);
+                    return false;
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("An unexpected error occurred.");
+                return false;
+            }
+        }
+
+               async function saveImages() {
+            const files = document.getElementById("applicantImages").files;
+
+            if (files.length === 0) {
+                console.log("No images selected.");
+                alert("No images selected to upload.");
+                return;
+            }
+
+
+             for(let i = 0; i < files.length; i++){
+
+            const formData = new FormData();
+            formData.append("file", files[0]);
+
+            try {
+                const response = await fetch("/ApplicantImages/CreateApplicantImage", {
+                    method: "POST",
+                    body: formData,
+                });
+
+                if (response.ok) {
+                    alert("Image uploaded and path saved successfully!");
+                } else {
+                    const errorText = await response.text();
+                    console.error("Error:", errorText);
+                    alert("Error uploading images: " + errorText);
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("An unexpected error occurred.");
+            }
+           }
+         }
+
+        async function fileToByteArray(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    const arrayBuffer = reader.result;
+                    const byteArray = new Uint8Array(arrayBuffer);
+                    resolve(Array.from(byteArray));
+                };
+                reader.onerror = reject;
+                reader.readAsArrayBuffer(file);
+            });
+        }
+
+
+
+    </script>
+
+</body>
+
